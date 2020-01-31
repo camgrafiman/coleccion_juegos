@@ -1,2 +1,48 @@
 comandos npm e instalaciones:
 
+npm init
+npm run start
+npm run dev
+npm install --
+
+
+----- BACKEND ----------
+(-y griega para crear archivo package.json)
+(-D para devDependencies)
+npm init -y 
+npm i express mongoose cors dotenv
+npm i nodemon -D
+
+
+--------------
+BASE DE DATOS: USUARIO Y CONTRASEÑA
+administradorDB
+ghostrider87!
+URL Encode password: ghostrider87%21
+
+Connection String:
+mongodb+srv://administradorDB:ghostrider87%21@clustervg-xrrb2.mongodb.net/test?retryWrites=true&w=majority
+
+
+
+
+------- FRONTEND -------------
+  npm start                                                                
+    Starts the development server.                                         
+                                                                           
+  npm run build                                                            
+    Bundles the app into static files for production.                      
+                                                                           
+  npm test                                                                 
+    Starts the test runner.                                                
+                                                                           
+  npm run eject                                                            
+    Removes this tool and copies build dependencies, configuration files   
+    and scripts into the app directory. If you do this, you can’t go back! 
+                                                                           
+We suggest that you begin by typing:                                       
+                                                                           
+  cd frontend                                                              
+  npm start                                                                
+                                                                           
+Happy hacking!                                                             
