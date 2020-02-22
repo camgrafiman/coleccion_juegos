@@ -9,6 +9,7 @@ const {
     crearUsuarios,
     crearUsuario,
     getUsuario,
+    eliminarUsuario,
     actualizarUsuario
 } = require('../controladores/usuarios.controlador');
 
@@ -23,7 +24,8 @@ router.route('/')
 router.route('/:id')
     .get(getUsuario)
     .post(crearUsuario)
-    .put(actualizarUsuario);
+    .put(actualizarUsuario)
+    .delete(eliminarUsuario);
 // .delete((req, res) => res.json({
 //     mensaje: 'Usuario eliminado' + req.params.id
 // }));

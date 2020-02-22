@@ -9,13 +9,27 @@ const modeloVideojuego = new Schema({
         type: String,
         required: true
     },
+    titulo_original: String,
     categoria: String,
     contenido: String,
     plataformas: Array,
     companias: Array,
     rutaImg: {
-        type: String,
-        required: true
+        type: String
+    },
+    cloudImg: {
+        type: String
+    },
+    cloudImg_segura: {
+        type: String
+    },
+    formato: {
+        type: String
+    },
+    ancho: Number,
+    alto: Number,
+    idImg: {
+        type: String
     },
     puntuacion: Number,
     fecha: {

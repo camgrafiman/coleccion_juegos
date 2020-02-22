@@ -66,7 +66,7 @@ usuariosControl.actualizarUsuario = async (req, res) => {
         password,
         puntuacion
     } = req.body;
-    mUsuario.findOneAndUpdate(req.params.id, {
+    await mUsuario.findOneAndUpdate(req.params.id, {
         email,
         password,
         puntuacion
@@ -74,6 +74,11 @@ usuariosControl.actualizarUsuario = async (req, res) => {
     res.json({
         mensaje: "Usuario id: " + req.params.id + nombre + " ha sido actualizado"
     });
+};
+
+usuariosControl.eliminarUsuario = async (req, res) => {
+    await mUsuario.findByIdAndDelete(req.params.id);
+    res.json({ mensaje: 'Usuario ' + req.params.id + ' ha sido eliminado' });
 };
 
 

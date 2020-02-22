@@ -11,6 +11,9 @@ npm install --
 (-D para devDependencies)
 npm init -y 
 npm i express mongoose cors dotenv
+npm i multer
+npm i cloudinary
+npm i body-parser
 npm i nodemon -D
 
 
@@ -23,7 +26,8 @@ URL Encode password: ghostrider87%21
 Connection String:
 mongodb+srv://administradorDB:ghostrider87%21@clustervg-xrrb2.mongodb.net/test?retryWrites=true&w=majority
 
-
+------IMPORTANTE---------------------
+SI la conexión va con mongodb atlas meter la IP en whitelist, entrando en cloud.mongodb.com > security > network access y meter la IP en whitelist.
 
 
 ------- FRONTEND -------------
