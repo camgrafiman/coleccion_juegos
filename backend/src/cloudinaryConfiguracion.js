@@ -25,6 +25,7 @@ module.exports.uploads = (archivo) => {
             })
         }, {resource_type: "auto"})
     })
+    /* no escribir then aqui para usarlo en el controlador. */
 }
 
 // module.exports = cloudinaryConfiguracion;

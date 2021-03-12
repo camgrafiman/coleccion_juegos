@@ -182,21 +182,22 @@ export class CrearJuego extends Component {
   enviarJuego = async e => {
     e.preventDefault();
 
-    var formData = new FormData();
-    var imagefile = document.querySelector('#rutaImg');
-    formData.append('rutaImg', imagefile.files[0]);
-    formData.append('titulo', this.state.titulo);
-    formData.append('categoria', this.state.categoria);
-    formData.append('contenido', this.state.contenido);
-    formData.append('puntuacion', this.state.puntuacion);
-
-    const plataformasString = JSON.stringify(this.state.plataformas);
-    const companiasString = JSON.stringify(this.state.companias);
-    formData.append('plataformas', plataformasString);
-    formData.append('companias', companiasString);
-
     if (this.state.editando) {
       console.log('Estado: editando.');
+
+      var formData = new FormData();
+      var imagefile = document.querySelector('#rutaImg');
+      formData.append('rutaImg', imagefile.files[0] || this.state.rutaImgpre);
+      formData.append('titulo', this.state.titulo);
+      formData.append('categoria', this.state.categoria);
+      formData.append('contenido', this.state.contenido);
+      formData.append('puntuacion', this.state.puntuacion);
+
+      const plataformasString = JSON.stringify(this.state.plataformas);
+      const companiasString = JSON.stringify(this.state.companias);
+      formData.append('plataformas', plataformasString);
+      formData.append('companias', companiasString);
+
       await axios
         .put(
           'http://localhost:4001/api/videojuegos/' + this.state.idVideojuego,
@@ -229,11 +230,25 @@ export class CrearJuego extends Component {
         contenido: '',
         plataformas: [],
         companias: [],
-        rutaImg: null,
+        rutaImg: this.state.rutaImgpre,
         rutaImgpre: 'https://via.placeholder.com/1000x1000.jpg?text=Preview',
         puntuacion: 0
       });
     } else {
+      console.log('No editando');
+      var formData = new FormData();
+      var imagefile = document.querySelector('#rutaImg');
+      formData.append('rutaImg', imagefile.files[0]);
+      formData.append('titulo', this.state.titulo);
+      formData.append('categoria', this.state.categoria);
+      formData.append('contenido', this.state.contenido);
+      formData.append('puntuacion', this.state.puntuacion);
+
+      const plataformasString = JSON.stringify(this.state.plataformas);
+      const companiasString = JSON.stringify(this.state.companias);
+      formData.append('plataformas', plataformasString);
+      formData.append('companias', companiasString);
+
       await axios
         .post('http://localhost:4001/api/videojuegos', formData, {
           headers: {
@@ -267,10 +282,16 @@ export class CrearJuego extends Component {
         puntuacion: 0
       });
     }
+
+    /*Redireccionar a la home una vez enviado. */
+    setTimeout(() => {
+      // window.location.href = '/';
+      this.props.history.push('/');
+    }, 1000);
   };
 
   render() {
-    const edit = this.state.editando;
+    let edit = this.state.editando;
     return (
       <ReactCSSTransitionGroup
         transitionName='anim'
@@ -346,22 +367,41 @@ export class CrearJuego extends Component {
                     Por favor selecciona una categoría.
                   </div>
                 </div>
-                <div className='custom-file'>
-                  <input
-                    type='file'
-                    name='rutaImg'
-                    className='custom-file-input'
-                    id='rutaImg'
-                    required
-                    onChange={this.cambioImagen}
-                  />
-                  <label className='custom-file-label' htmlFor='rutaImg'>
-                    Elegir archivo...
-                  </label>
-                  <div className='invalid-feedback'>
-                    Por favor elige un archivo de imagen .jpg o .png. máx 1mb.
+                {edit ? (
+                  <div className='custom-file'>
+                    <input
+                      type='file'
+                      name='rutaImg'
+                      className='custom-file-input'
+                      id='rutaImg'
+                      onChange={this.cambioImagen}
+                    />
+                    <label className='custom-file-label' htmlFor='rutaImg'>
+                      Elegir archivo...
+                    </label>
+                    <div className='invalid-feedback'>
+                      Por favor elige un archivo de imagen .jpg o .png. máx 1mb.
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div className='custom-file'>
+                    <input
+                      type='file'
+                      name='rutaImg'
+                      className='custom-file-input'
+                      id='rutaImg'
+                      required
+                      onChange={this.cambioImagen}
+                    />
+                    <label className='custom-file-label' htmlFor='rutaImg'>
+                      Elegir archivo...
+                    </label>
+                    <div className='invalid-feedback'>
+                      Por favor elige un archivo de imagen .jpg o .png. máx 1mb.
+                    </div>
+                  </div>
+                )}
+
                 <div className='form-group '>
                   <label
                     htmlFor='plataformas'
@@ -400,10 +440,15 @@ export class CrearJuego extends Component {
                     required
                   />
                 </div>
-
-                <button className='btn btn-secondary' type='submit'>
-                  Agregar videojuego
-                </button>
+                {edit ? (
+                  <button className='btn btn-secondary' type='submit'>
+                    Editar videojuego
+                  </button>
+                ) : (
+                  <button className='btn btn-secondary' type='submit'>
+                    Agregar videojuego
+                  </button>
+                )}
               </form>
             </div>
             <div className='py-4 col-md-6 col-sm-12'>

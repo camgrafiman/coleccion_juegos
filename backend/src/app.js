@@ -1,15 +1,21 @@
+/*la libreria Express es una infraestructura de aplicaciones web Node.js mínima y flexible que proporciona un conjunto sólido de características para las aplicaciones web y móviles.  */
 const express = require('express');
 /*Body Parser: es un nodo middleware para el handling json, raw, textos y url encoded form data*/
 const bodyParser = require('body-parser');
 
 const multer = require('multer');
+
 /*Path: acceso a Carpeta de proyecto  */
 const path = require('path');
 
 const app = express();
 const cors = require('cors');
 
-
+/* ******* Integración con GraphQL ********* */
+const { makeExecutableSchema } = require('graphql-tools');
+const { ApolloServer, gql } = require('apollo-server-express');
+const schemaGql = require('../graphql_schema/schema');
+const resolversGql = require('../resolvers/resolvers');
 
 // configuración del servidor:
 /* puerto en el que queremos conectar el servidor */
@@ -27,7 +33,6 @@ app.use(express.static(path.join(__dirname, '/public')));
 app.use('/subidas', express.static('subidas'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
 
 // // HANDLING CORS ERRORS
 // app.use((req, res, next) => {
@@ -59,8 +64,40 @@ app.use(bodyParser.json());
 app.use('/api/usuarios', require('../rutas/usuarios'));
 app.use('/api/videojuegos', require('../rutas/videojuegos'));
 
+/* ******* Integración con GraphQL ********* */
+const mUsuario = require('../modelos/usuario.modelo');
+const mVideojuego = require('../modelos/videojuego.modelo');
+//definir como luce el schema:
+const apolloserver = new ApolloServer({
+  
+  // como lucen mis datos, propiedades
+  typeDefs: schemaGql,
+  //metodos y como puede consultarlos, interactuar con los datos, obtener agregar etc:
+  resolvers: resolversGql,
+  context: { mUsuario, mVideojuego }
+});
+apolloserver.applyMiddleware({
+  app,
+  schema: schemaGql
+});
+app.listen(() =>
+  console.log(`🚀 Servidor Apollo listo en: ${puerto}${apolloserver.graphqlPath} `)
+)
 
-
+// rutas de graphql:
+// app.use(
+//   '/graphql',
+//   bodyParser.json(),
+//   graphqlExpress({
+//     // schema: como van a lucir mis datos:
+//     schema: schema,
+//     // context: los modelos en el cual se va a guiar:
+//     context: {
+//       mUsuario,
+//       mVideojuego
+//     }
+//   })
+// );
 
 /* --------------------- */
 /* exportar */

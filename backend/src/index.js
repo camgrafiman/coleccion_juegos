@@ -18,5 +18,5 @@ async function principal() {
     console.log(`Servidor en puerto:`, app.get('port'));
 
 }
-
+/* Inicia la App: */
 principal();

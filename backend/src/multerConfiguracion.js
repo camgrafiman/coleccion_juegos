@@ -1,7 +1,10 @@
+/* Multer es un Middleware de Node.js que es usado para tratar multipart/form-data, mayoritariamente usado para subir archivos. 
+NOTA: Multer  no procesará formularios que no tengan el multipart. (multipart/form-data). */
 const multer = require('multer');
 
 /* Crea un espacio para guardar archivos */
 // multer.diskStorage();
+
 
 const almacenamiento = multer.diskStorage({
   /*destination: donde quiero guardar mis archivos */

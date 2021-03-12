@@ -28,9 +28,13 @@ mongodb+srv://administradorDB:ghostrider87%21@clustervg-xrrb2.mongodb.net/test?r
 
 ------IMPORTANTE---------------------
 SI la conexión va con mongodb atlas meter la IP en whitelist, entrando en cloud.mongodb.com > security > network access y meter la IP en whitelist.
+nota: me ha dado un par de fallos porque mi IP cambia, hay que entrar en la url y meter la IP en whitelist.
 
 
 ------- FRONTEND -------------
+  npm run dev
+    Empieza el entorno de desarrollo.
+
   npm start                                                                
     Starts the development server.                                         
                                                                            

@@ -7,7 +7,7 @@ const cargaMulter = require('../src/multerConfiguracion');
 /*Importar configuración de cloudinary para la subida de archivos */
 const cloudinary = require('../src/cloudinaryConfiguracion');
 
-/* PLURAL */
+/* GET - PLURAL */
 vgControl.getVideojuegos = async (req, res) => {
   const listaVideojuegos = await mVideojuego.find();
 
@@ -19,7 +19,8 @@ vgControl.getVideojuegos = async (req, res) => {
 /* POST - CREAR */
 
 vgControl.crearVideojuegos = async (req, res, next) => {
-  console.log(req.file);
+  // console.log("req.file --------------------");
+  // console.log(req.file);
 
   const limiteSubida = { fileSize: 1 * 1024 * 1024 };
   if (!req.file) {
@@ -49,38 +50,44 @@ vgControl.crearVideojuegos = async (req, res, next) => {
           //     res.json({ message: 'file already exist' })
           // }
           else {
-            //console.log(res);
+            // console.log("Res ----------------");
+            // console.log(res.file);
             var imageDetails = {
               rutaImg: req.body.rutaImg,
               cloudImg: req.file.path,
               idImg: '',
               titulo: req.body.titulo
             };
-            // IF ALL THING GO WELL, POST THE IMAGE TO CLOUDINARY
+            //  Si todo va bien, se postea/sube la imagen a Cloudinary. 
             const subidaImg = cloudinary
-              .uploads(imageDetails.cloudImg)
-              .then(result => {
+              .uploads(imageDetails.cloudImg).then(resultado => {
+                console.log("resultado en controlador:");
+                console.log(resultado);
+                //console.log(imageDetails);
+                // console.log("Result ---------------------");
                 // console.log(result);
+                // console.log("Req.body ----------------");
                 // console.log(req.body);
+                // console.log("imageDetails ----------------");
                 // console.log(imageDetails);
 
                 //var imageDetails = { titulo: req.body.titulo, rutaImg: req.body.rutaImg, cloudImg: result.url, idImg: result.id }
                 const nuevoVideojuego = new mVideojuego({
                   titulo: req.body.titulo,
-                  titulo_original: result.nombre_original,
+                  titulo_original: resultado.nombre_original,
                   contenido: req.body.contenido,
                   categoria: req.body.categoria,
                   plataformas: JSON.parse(req.body.plataformas),
                   companias: JSON.parse(req.body.companias),
                   rutaImg: req.body.rutaImg,
-                  cloudImg: result.url,
-                  cloudImg_segura: result.url_segura,
-                  formato: result.formato,
-                  ancho: result.width,
-                  alto: result.height,
-                  idImg: result.id,
+                  cloudImg: resultado.url,
+                  cloudImg_segura: resultado.url_segura,
+                  formato: resultado.formato,
+                  ancho: resultado.width,
+                  alto: resultado.height,
+                  idImg: resultado.id,
                   puntuacion: req.body.puntuacion,
-                  fecha: result.fecha_creacion
+                  fecha: resultado.fecha_creacion
                 });
 
                 //Ahora crear el videojuego en la base de datos
@@ -103,12 +110,12 @@ vgControl.crearVideojuegos = async (req, res, next) => {
         }
       );
     } catch (errores) {
-      console.log(errores);
+      //console.log(errores);
     }
   }
 };
 
-/*DELETE ALL Videojuegos */
+/*DELETE - PLURARL | Borrar todos los Videojuegos */
 vgControl.borrarVideojuegos = async (req, res) => {
   /*Eliminar item pasandole el id */
   await mVideojuego.deleteMany({});
@@ -186,24 +193,107 @@ vgControl.actualizarVideojuego_old = async (req, res) => {
   });
 };
 
+/* PUT */
+
 vgControl.actualizarVideojuego = async (req, res, next) => {
-  console.log(req.file);
 
   const limiteSubida = { fileSize: 1 * 1024 * 1024 };
+  
+  /*Editar o no la imagen */
   if (!req.file) {
-    return res.send('Por favor suba un archivo');
+    // return res.send('Por favor suba un archivo');
+  /* Si no existe req.file, significa que el user no ha cambiado la imagen, por tanto: */
+    console.log("no hay imagen del req.");
+    try {
+      // var imageDetails = {
+      //   rutaImg: req.body.rutaImg
+      // };
+      let idActual = req.params.id;
+      //USING MONGO METHOD TO FINE IF IMAGE-NAME EXIST IN THE DB
+      await mVideojuego.find( {idActual},(err, callback) => {
+         
+          if (err) {
+            res.json({
+              err: err,
+              message:
+                'ERROR: Ha habido un problema al actualizar la imagen!'
+            });
+          }
+          else if (callback.length >= 1) {
+              res.json({ message: 'El archivo ya existe.' })
+          }
+          else {
+            //console.log(res);
+            // var imageDetails = {
+            //   rutaImg: rutaImg,
+            //   cloudImg: cloudImg,
+            //   idImg: '',
+            //   titulo: req.body.titulo
+            // };
+
+                // const nuevoVideojuego = {
+                //   titulo: req.body.titulo,
+                //   titulo_original: result.nombre_original,
+                //   contenido: req.body.contenido,
+                //   categoria: req.body.categoria,
+                //   plataformas: JSON.parse(req.body.plataformas),
+                //   companias: JSON.parse(req.body.companias),
+                //   rutaImg: req.body.rutaImg,
+                //   cloudImg: result.url,
+                //   cloudImg_segura: result.url_segura,
+                //   formato: result.formato,
+                //   ancho: result.width,
+                //   alto: result.height,
+                //   idImg: result.id,
+                //   puntuacion: req.body.puntuacion,
+                //   fecha: result.fecha_creacion
+                // };
+            const nuevoVideojuego = {
+              titulo: req.body.titulo,
+              contenido: req.body.contenido,
+              categoria: req.body.categoria,
+              plataformas: JSON.parse(req.body.plataformas),
+              companias: JSON.parse(req.body.companias),
+              puntuacion: req.body.puntuacion
+            };
+
+            for (let prop in nuevoVideojuego) if (!nuevoVideojuego[prop]) delete nuevoVideojuego[prop];
+
+                //Ahora crear el videojuego en la base de datos
+                mVideojuego.findOneAndUpdate({ _id: req.params.id }, nuevoVideojuego, (err, creado) => {
+                  if (err) {
+                    res.json({
+                      err: err,
+                      message:
+                        'No se ha podido actualizar la imagen, inténtelo de nuevo.'
+                    });
+                  } else {
+                    res.json({
+                      creado: creado,
+                      message: 'La imagen se ha actualizado correctamente!!'
+                    });
+                  }
+                });
+              
+          }
+        }
+      );
+    } catch (errores) {
+      console.log(errores);
+    }
   }
-  if (req.file.size >= limiteSubida.fileSize) {
-    return res.send('Tamaño de imagen superior al permitido: 1MB');
-  } else {
+
+  else {
+    if (req.file.size >= limiteSubida.fileSize) {
+      return res.send('Tamaño de imagen superior al permitido: 1MB');
+    } 
     try {
       var imageDetails = {
         rutaImg: req.body.rutaImg
       };
+      let idActual = req.params.id;
       //USING MONGO METHOD TO FINE IF IMAGE-NAME EXIST IN THE DB
-      await mVideojuego.find(
-        { rutaImg: imageDetails.rutaImg },
-        (err, callback) => {
+      await mVideojuego.find({idActual}, (err, callback) => {
           //CHECKING IF ERROR OCCURRED
           //console.log(callback);
           if (err) {
@@ -228,11 +318,7 @@ vgControl.actualizarVideojuego = async (req, res, next) => {
             const subidaImg = cloudinary
               .uploads(imageDetails.cloudImg)
               .then(result => {
-                // console.log(result);
-                // console.log(req.body);
-                // console.log(imageDetails);
-
-                //var imageDetails = { titulo: req.body.titulo, rutaImg: req.body.rutaImg, cloudImg: result.url, idImg: result.id }
+                
                 const nuevoVideojuego = {
                   titulo: req.body.titulo,
                   titulo_original: result.nombre_original,
